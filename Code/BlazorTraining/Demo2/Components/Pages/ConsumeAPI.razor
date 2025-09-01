@@ -1,0 +1,55 @@
+﻿@page "/consumeapi"
+@inject HttpClient Http
+
+<h3>Chuck Norris Jokes API</h3>
+<button @onclick="LoadData">Load</button>
+
+@if (loading)
+{
+    <p>Loading...</p>
+}
+else if (jokes != null)
+{
+    <ul>
+        @foreach (var joke in jokes)
+        {
+            <li>@(new MarkupString(joke))</li>
+        }
+    </ul>
+}
+@if (errorMessage != null)
+{
+    <p style="color:red">@errorMessage</p>
+}
+
+@code {
+    private List<string> jokes;
+    private bool loading = false;
+    private string errorMessage;
+
+    private class Joke
+    {
+        public string Value { get; set; }
+    }
+
+    private async Task LoadData()
+    {
+        loading = true;
+        errorMessage = null;
+        jokes = new List<string>();
+
+        try
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                var jokeResponse = await Http.GetFromJsonAsync<Joke>("https://api.chucknorris.io/jokes/random");
+                jokes.Add(jokeResponse?.Value ?? "No joke found");
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error fetching jokes: {ex.Message}";
+        }
+        loading = false;
+    }
+}

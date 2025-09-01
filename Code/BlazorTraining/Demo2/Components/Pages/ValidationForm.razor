@@ -1,0 +1,46 @@
+﻿@page "/validationform"
+@using System.ComponentModel.DataAnnotations
+
+<h3>Validation Form with Regex</h3>
+
+<EditForm Model="@formModel" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div>
+        <label>Name:</label>
+        <InputText @bind-Value="formModel.Name" />
+        <ValidationMessage For="@(() => formModel.Name)" />
+    </div>
+    <div>
+        <label>Email:</label>
+        <InputText @bind-Value="formModel.Email" />
+        <ValidationMessage For="@(() => formModel.Email)" />
+    </div>
+    <button type="submit">Submit</button>
+</EditForm>
+
+@if (submitted)
+{
+    <div class="alert alert-success">Submitted successfully!</div>
+}
+
+@code {
+    private MyFormModel formModel = new();
+    private bool submitted = false;
+
+    public class MyFormModel
+    {
+        [Required]
+        [RegularExpression(@"^[a-zA-Z\s.\-']{2,}$", ErrorMessage = "Name is invalid (letters and spaces only, min 2 chars).")]
+        public string Name { get; set; }
+
+        [Required]
+        [RegularExpression(@"^[^@\s]+@[^@\s]+\.[^@\s]+$", ErrorMessage = "Invalid email format.")]
+        public string Email { get; set; }
+    }
+
+    private void HandleValidSubmit()
+    {
+        submitted = true;
+    }
+}

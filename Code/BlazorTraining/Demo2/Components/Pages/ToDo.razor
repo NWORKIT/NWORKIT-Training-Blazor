@@ -1,0 +1,44 @@
+﻿@page "/todo"
+
+<h3>📝 To-Do List</h3>
+
+
+<input @bind="newTask" @onkeydown="OnEnter" />
+
+<button @onclick="AddTask">Add Task</button>
+
+<ul>
+    @foreach (var task in tasks)
+    {
+        <li>
+            <input type="checkbox" @bind="task.IsDone" />
+            <span style="@(task.IsDone ? "text-decoration:line-through" : "")">@task.Text</span>
+            <button @onclick="@(() => RemoveTask(task))">Remove</button>
+        </li>
+    }
+</ul>
+
+@code {
+    private string newTask = "";
+    private List<TaskItem> tasks = new();
+
+    private void AddTask()
+    {
+        if (!string.IsNullOrWhiteSpace(newTask))
+        {
+            tasks.Add(new TaskItem { Text = newTask });
+            newTask = "";
+        }
+    }
+    private void RemoveTask(TaskItem task) => tasks.Remove(task);
+
+    private void OnEnter(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter") AddTask();
+    }
+    public class TaskItem
+    {
+        public string Text { get; set; } = "";
+        public bool IsDone { get; set; }
+    }
+}

@@ -1,0 +1,15 @@
+﻿@using Microsoft.AspNetCore.Components.Web 
+
+@rendermode RenderMode.InteractiveServer
+
+<h3>Server Component</h3>
+
+
+<p>Rendered with Blazor Server</p>
+
+<button @onclick="Increment">Conter: @count</button>
+
+@code {
+    int count = 0;
+    void Increment() => count++;
+}
